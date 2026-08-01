@@ -6,12 +6,10 @@
     <title>한수위 - 중등 수행평가 MBTI 진단 테스트</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Jua for title, Noto Sans KR for highly readable body -->
+    <!-- Google Fonts: Jua for titles, Noto Sans KR for highly readable body -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <!-- html2canvas for result image saving -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         body {
@@ -42,7 +40,7 @@
         .animate-title {
             animation: titleFloat 2s ease-in-out infinite;
         }
-        /* Custom scrollbar for modals */
+        /* Custom scrollbar for preview modal */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -545,60 +543,6 @@
             showToast("🔗 테스트 링크가 복사되었습니다!");
         }
 
-        /* Improved image capture with explicit html2canvas options and fallback popup */
-        function saveResultCard() {
-            const cardEl = document.getElementById('result-card');
-            if (!cardEl) return;
-            if (typeof html2canvas === 'undefined') {
-                showToast("⚠️ 이미지 생성을 위한 라이브러리가 로드 중입니다. 잠시 후 시도해 주세요.");
-                return;
-            }
-            showToast("📸 진단 결과 이미지를 생성 중입니다...");
-            
-            setTimeout(() => {
-                html2canvas(cardEl, {
-                    scale: 2,                  // High resolution capture
-                    backgroundColor: "#FFFFFF", // White card base
-                    useCORS: true,              // Allow external fonts/assets
-                    allowTaint: true,           // Allow inline SVGs
-                    logging: false
-                }).then(canvas => {
-                    try {
-                        const imageUri = canvas.toDataURL('image/png');
-                        const link = document.createElement('a');
-                        link.download = `${userName}_한수위_수행평가_진단결과.png`;
-                        link.href = imageUri;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        showToast("✅ 진단 결과 이미지가 성공적으로 저장되었습니다!");
-                        playSfx(523.25, 0.15);
-                    } catch (e) {
-                        console.error("Download error:", e);
-                        openCanvasInNewTab(canvas);
-                    }
-                }).catch(err => {
-                    console.error("Canvas rendering error:", err);
-                    showToast("⚠️ 이미지 생성에 실패했습니다. 화면을 직접 캡처해 주세요.");
-                });
-            }, 150);
-        }
-
-        function openCanvasInNewTab(canvas) {
-            try {
-                const imageUri = canvas.toDataURL('image/png');
-                const win = window.open();
-                if (win) {
-                    win.document.write(`<div style="text-align:center;padding:20px;"><p style="font-size:18px;font-weight:bold;">이미지를 길게 누르거나 마우스 우클릭하여 저장하세요.</p><img src="${imageUri}" style="max-width:100%;border:2px solid #000;border-radius:12px;"/></div>`);
-                    showToast("✅ 새 창에서 이미지를 저장하세요!");
-                } else {
-                    showToast("⚠️ 팝업이 차단되었습니다. 화면 캡처를 이용해 주세요.");
-                }
-            } catch (err) {
-                showToast("⚠️ 결과 저장에 실패했습니다. 화면 캡처를 이용해 주세요.");
-            }
-        }
-
         function showToast(msg) {
             toastMessage = msg;
             updateApp();
@@ -749,7 +693,7 @@
 
                 const arch = archetypeMap[finalCode] || archetypeMap["PLC"] || archetypeMap["POC"];
 
-                // Score Percentages & RPG Levels calculation
+                // Percentages & RPG Levels calculation
                 const pTotal = (finalScores.P + finalScores.I) || 1;
                 const oTotal = (finalScores.O + finalScores.L) || 1;
                 const cTotal = (finalScores.C + finalScores.S) || 1;
@@ -762,7 +706,7 @@
                 const lPct = 100 - oPct;
                 const sPct = 100 - cPct;
 
-                // Levels
+                // RPG Levels
                 const logicLv = Math.min(99, Math.max(60, Math.round(lPct * 0.4 + 59)));
                 const creativeLv = Math.min(99, Math.max(60, Math.round(oPct * 0.4 + 59)));
                 const planLv = Math.min(99, Math.max(60, Math.round(pPct * 0.4 + 59)));
@@ -770,8 +714,8 @@
 
                 app.innerHTML = `
                     ${toastHtml}
-                    <!-- 공유 및 이미지 저장 대상 결과 카드 영역 -->
-                    <div id="result-card" class="bg-white p-3.5 rounded-2xl border-2 border-black flex flex-col gap-3">
+                    <!-- 진단 결과 카드 영역 -->
+                    <div class="bg-white p-3.5 rounded-2xl border-2 border-black flex flex-col gap-3">
                         <div class="text-center">
                             <span class="text-xs font-bold bg-amber-200 text-black py-1 px-3 rounded-full border border-black inline-block mb-1">
                                 수행평가 본캐 진단결과
@@ -841,20 +785,19 @@
                         </div>
 
                         <!-- 찰떡 궁합 친구 유형 -->
-                        <div class="bg-indigo-50 border-2 border-black rounded-xl p-2.5 text-xs font-bold flex flex-col gap-0.5">
-                            <span class="text-indigo-900">👥 모둠 과제 찰떡 궁합 친구:</span>
-                            <span class="text-indigo-700 text-sm font-extrabold">${arch.bestMatch}</span>
-                            <span class="text-gray-700 font-medium">${arch.bestMatchDesc}</span>
+                        <div class="bg-indigo-50 border-2 border-black rounded-xl p-3 text-xs font-bold flex flex-col gap-1">
+                            <div class="flex items-center gap-1 text-indigo-900 text-sm font-extrabold">
+                                <span>👥 모둠 과제 찰떡 궁합 친구:</span>
+                                <span class="text-indigo-700 font-black">${arch.bestMatch}</span>
+                            </div>
+                            <span class="text-gray-700 font-medium leading-tight">${arch.bestMatchDesc}</span>
                         </div>
                     </div>
 
-                    <!-- 결과 저장 및 공유 버튼 영역 -->
-                    <div class="grid grid-cols-2 gap-2 mt-1">
-                        <button onclick="saveResultCard()" class="bg-blue-400 hover:bg-blue-500 text-black text-base font-bold p-2.5 rounded-xl pixel-border transition-all transform active:scale-95 cursor-pointer shadow-[2px_2px_0px_#000]">
-                            결과 저장하기 📸
-                        </button>
-                        <button onclick="copyShareLink()" class="bg-purple-300 hover:bg-purple-400 text-black text-base font-bold p-2.5 rounded-xl pixel-border transition-all transform active:scale-95 cursor-pointer shadow-[2px_2px_0px_#000]">
-                            테스트 공유 🔗
+                    <!-- 공유 버튼 영역 (1글자/전체 너비) -->
+                    <div class="w-full mt-1">
+                        <button onclick="copyShareLink()" class="w-full bg-purple-300 hover:bg-purple-400 text-black text-base font-bold p-3 rounded-xl pixel-border transition-all transform active:scale-95 cursor-pointer shadow-[2px_2px_0px_#000]">
+                            테스트 공유하기 🔗
                         </button>
                     </div>
 
@@ -875,7 +818,7 @@
                                 『한수위』 족보 템플릿 미리보기 📖
                             </button>
                             <a href="https://www.yes24.com/product/goods/194634602" target="_blank" class="w-full block bg-[#7FFF00] hover:bg-yellow-300 text-black text-lg font-bold p-2.5 rounded-xl pixel-border transition-all transform active:scale-95 pixel-shadow mt-0.5">
-                                [ 예스24에서 치트키 도서 보러가기 📚 ]
+                                [ 예스24에서 한수위 도서 구매하기 📚 ]
                             </a>
                         </div>
                     </div>
@@ -917,7 +860,7 @@
                         </div>
 
                         <a href="https://www.yes24.com/product/goods/194634602" target="_blank" class="w-full text-center bg-[#7FFF00] hover:bg-yellow-300 text-black text-base font-bold p-2.5 rounded-xl border-2 border-black transition-all cursor-pointer shadow-[2px_2px_0px_#000]">
-                            예스24에서 도서 구매하기 📚
+                            예스24에서 한수위 도서 구매하기 📚
                         </a>
                     </div>
                 </div>
