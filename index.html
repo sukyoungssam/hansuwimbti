@@ -40,7 +40,6 @@
         .animate-title {
             animation: titleFloat 2s ease-in-out infinite;
         }
-        /* Custom scrollbar for preview modal */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -149,27 +148,21 @@
             return `
                 <svg viewBox="0 0 160 160" class="w-16 h-16 ${animClass}" style="filter: drop-shadow(3px 3px 0px rgba(0,0,0,0.15));">
                     <g>
-                        <!-- Head base -->
                         <rect x="40" y="48" width="80" height="64" fill="#FFE0BD" />
-                        <!-- Cheeks Blush -->
                         <rect x="44" y="88" width="16" height="8" fill="#FF8D9F" />
                         <rect x="100" y="88" width="16" height="8" fill="#FF8D9F" />
-                        <!-- Shiny eyes -->
                         <rect x="48" y="68" width="16" height="20" fill="#1E1E1E" />
                         <rect x="52" y="72" width="8" height="8" fill="#FFFFFF" />
                         <rect x="96" y="68" width="16" height="20" fill="#1E1E1E" />
                         <rect x="100" y="72" width="8" height="8" fill="#FFFFFF" />
-                        <!-- Smiling Mouth -->
                         <rect x="72" y="92" width="4" height="4" fill="#1E1E1E" />
                         <rect x="84" y="92" width="4" height="4" fill="#1E1E1E" />
                         <rect x="76" y="96" width="8" height="4" fill="#1E1E1E" />
-                        <!-- Pixel hands & feet -->
                         <rect x="32" y="112" width="12" height="12" fill="#FFE0BD" />
                         <rect x="116" y="112" width="12" height="12" fill="#FFE0BD" />
                         <rect x="52" y="136" width="16" height="12" fill="#1E1E1E" />
                         <rect x="92" y="136" width="16" height="12" fill="#1E1E1E" />
 
-                        <!-- Specialized Outfits -->
                         ${type === 'cherry' ? `
                             <rect x="32" y="40" width="96" height="12" fill="#4E3629" />
                             <rect x="24" y="48" width="16" height="40" fill="#4E3629" />
@@ -552,6 +545,24 @@
             }, 3000);
         }
 
+        function handleImgError(img) {
+            if (!img.dataset.tryCount) img.dataset.tryCount = "1";
+            const count = parseInt(img.dataset.tryCount);
+            
+            if (count === 1) {
+                img.dataset.tryCount = "2";
+                img.src = "11111.jpg";
+            } else if (count === 2) {
+                img.dataset.tryCount = "3";
+                img.src = "11111.png";
+            } else if (count === 3) {
+                img.dataset.tryCount = "4";
+                img.src = "11111.JPEG";
+            } else {
+                img.src = "https://image.yes24.com/goods/194634602/L";
+            }
+        }
+
         function updateApp() {
             const app = document.getElementById('app');
             const audioBtnText = isMuted ? "🎵 BGM OFF" : "🔊 BGM ON";
@@ -568,7 +579,7 @@
                 app.innerHTML = `
                     ${toastHtml}
                     <div class="flex justify-between items-center w-full">
-                        <div class="bg-[#FFC0CB] text-black text-sm font-bold py-1 px-3 rounded-full pixel-border">
+                        <div class="bg-[#FFC0CB] text-black text-xs md:text-sm font-bold py-1 px-3 rounded-full pixel-border">
                             🎒 중등 수행평가 완벽 가이드
                         </div>
                         <button onclick="toggleMute()" class="${audioBtnColor} text-black text-xs font-bold py-1 px-2.5 rounded-md pixel-border cursor-pointer transition-all shrink-0">
@@ -576,31 +587,37 @@
                         </button>
                     </div>
 
-                    <div class="bg-amber-100 border-2 border-black rounded-xl p-2.5 text-center text-sm font-bold text-amber-950 shadow-[2px_2px_0px_#000]">
-                        👨‍👩‍👧‍👦 "수행평가 성향을 진단하고 솔루션을 제공합니다"
+                    <!-- 따옴표 완전 삭제된 안내 문구 -->
+                    <div class="bg-amber-100 border-2 border-black rounded-xl p-2.5 text-center text-xs md:text-sm font-bold text-amber-950 shadow-[2px_2px_0px_#000]">
+                        👨‍👩‍👧‍👦 수행평가 성향을 진단하고 솔루션을 제공합니다
                     </div>
                     
-                    <h1 class="font-retro-title text-5xl md:text-6xl font-bold text-center text-[#7FFF00] tracking-wider my-1 select-none animate-title" style="-webkit-text-stroke: 2px #000; filter: drop-shadow(4px 4px 0px #000);">
+                    <h1 class="font-retro-title text-4xl md:text-5xl font-bold text-center text-[#7FFF00] tracking-wider my-0.5 select-none animate-title" style="-webkit-text-stroke: 2px #000; filter: drop-shadow(3px 3px 0px #000);">
                         한수위
                     </h1>
-                    
-                    <div class="bg-[#A3E4D7] p-3 text-center text-base md:text-lg rounded-2xl pixel-border font-bold leading-tight">
-                        "한권으로 끝내는 중등 수행평가 최상위 전략"
+
+                    <!-- 파란색 상자 제거 후 정중앙 배치된 한수위 책 표지 -->
+                    <div class="flex justify-center my-1">
+                        <img src="11111.jpeg" 
+                             onerror="handleImgError(this)" 
+                             alt="한수위 도서 표지" 
+                             class="w-36 md:w-44 h-auto rounded-xl border-3 border-black shadow-[4px_4px_0px_#000] object-cover hover:scale-105 transition-transform duration-200 cursor-pointer"
+                             onclick="window.open('https://www.yes24.com/product/goods/194634602', '_blank')">
                     </div>
 
                     <!-- 닉네임 입력 -->
                     <div class="flex flex-col gap-1">
-                        <label class="text-base font-bold text-black flex items-center gap-1">🌟 네 닉네임을 적어줘!</label>
+                        <label class="text-xs md:text-sm font-bold text-black flex items-center gap-1">🌟 네 닉네임을 적어줘!</label>
                         <input type="text" id="nameInput" value="${userName}"
                                onfocus="if(this.value === '체리토끼') { this.value = ''; }"
                                onblur="if(this.value.trim() === '') { this.value = '체리토끼'; } userName = this.value;"
                                oninput="userName = this.value;"
-                               class="w-full bg-[#FFFDE7] p-3 text-lg font-bold rounded-xl pixel-border focus:outline-none" placeholder="닉네임 입력...">
+                               class="w-full bg-[#FFFDE7] p-2.5 text-sm md:text-base font-bold rounded-xl pixel-border focus:outline-none" placeholder="닉네임 입력...">
                     </div>
 
                     <!-- 아바타 선택 -->
                     <div class="flex flex-col gap-1">
-                        <label class="text-base font-bold text-black">🐰 나와 가장 닮은 아바타 선택</label>
+                        <label class="text-xs md:text-sm font-bold text-black">🐰 나와 가장 닮은 아바타 선택</label>
                         <div class="grid grid-cols-5 gap-1.5 pt-0.5">
                             ${Object.keys(avatars).map(key => `
                                 <button onclick="setAvatar('${key}')" class="flex flex-col items-center p-1 rounded-xl border-2 ${selectedAvatar === key ? 'border-black bg-[#FFFDE7] pixel-shadow font-bold scale-105' : 'border-gray-100 bg-gray-50 opacity-60'} transition-all cursor-pointer">
@@ -611,7 +628,7 @@
                         </div>
                     </div>
 
-                    <button onclick="startTest()" class="w-full mt-1 bg-[#7FFF00] hover:bg-yellow-300 text-black text-xl font-bold p-3.5 rounded-2xl pixel-border transition-all transform active:scale-95 cursor-pointer shadow-[4px_4px_0px_#000]">
+                    <button onclick="startTest()" class="w-full mt-1 bg-[#7FFF00] hover:bg-yellow-300 text-black text-lg md:text-xl font-bold p-3 rounded-2xl pixel-border transition-all transform active:scale-95 cursor-pointer shadow-[4px_4px_0px_#000]">
                         진단 테스트 시작하기! 🚀
                     </button>
                 `;
@@ -632,14 +649,14 @@
 
                 app.innerHTML = `
                     ${toastHtml}
-                    <div class="flex justify-between items-center w-full text-base font-bold text-black">
+                    <div class="flex justify-between items-center w-full text-sm md:text-base font-bold text-black">
                         <span>🕹️ 진단 진행률 (${currentQ + 1} / ${questions.length})</span>
                         <button onclick="toggleMute()" class="${audioBtnColor} text-black text-xs font-bold py-1 px-2.5 rounded-md pixel-border cursor-pointer shrink-0">
                             ${audioBtnText}
                         </button>
                     </div>
                     
-                    <div class="w-full h-4 bg-gray-100 rounded-full pixel-border p-0.5 overflow-hidden">
+                    <div class="w-full h-3.5 bg-gray-100 rounded-full pixel-border p-0.5 overflow-hidden">
                         <div class="h-full bg-[#7FFF00] transition-all duration-300 rounded-full" style="width: ${progress || 5}%"></div>
                     </div>
 
@@ -647,21 +664,21 @@
                         ${renderPixelAvatar(selectedAvatar, true)}
                     </div>
 
-                    <div class="bg-white p-4 rounded-2xl pixel-border min-h-[90px] flex items-center justify-center">
-                        <p class="text-base md:text-lg font-bold text-black leading-snug text-center">
+                    <div class="bg-white p-3.5 rounded-2xl pixel-border min-h-[85px] flex items-center justify-center">
+                        <p class="text-sm md:text-base font-bold text-black leading-snug text-center">
                             ${q.text}
                         </p>
                     </div>
 
-                    <div class="flex flex-col gap-2 mt-0.5">
+                    <div class="flex flex-col gap-1.5 mt-0.5">
                         ${q.options.map((opt, idx) => {
                             const isSelected = selectedOptionIdx === idx;
                             const config = optionsConfigs[idx];
                             const borderClass = isSelected ? "border-4 border-black scale-[1.01] shadow-[2px_2px_0px_rgba(0,0,0,1)]" : "border-2 border-black opacity-90";
                             return `
-                                <button onclick="selectOption(${idx})" class="w-full ${config.base} text-left text-base p-2.5 rounded-xl ${borderClass} transition-all transform cursor-pointer flex items-center gap-2.5">
-                                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg ${config.badge} text-white font-extrabold shadow-[1px_1px_0px_#000] border-2 border-black text-sm shrink-0">${config.label}</span>
-                                    <span class="font-bold leading-tight text-gray-900 text-sm md:text-base">${opt.text}</span>
+                                <button onclick="selectOption(${idx})" class="w-full ${config.base} text-left p-2 rounded-xl ${borderClass} transition-all transform cursor-pointer flex items-center gap-2">
+                                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-lg ${config.badge} text-white font-extrabold shadow-[1px_1px_0px_#000] border-2 border-black text-xs shrink-0">${config.label}</span>
+                                    <span class="font-bold leading-tight text-gray-900 text-xs md:text-sm">${opt.text}</span>
                                 </button>
                             `;
                         }).join('')}
@@ -669,12 +686,12 @@
 
                     <div class="flex gap-2 mt-1">
                         ${currentQ > 0 ? `
-                            <button onclick="prevQuestion()" class="w-1/3 bg-gray-200 hover:bg-gray-300 text-black text-base font-bold p-2.5 rounded-2xl pixel-border transition-all transform active:scale-95 cursor-pointer shadow-[3px_3px_0px_#000]">
+                            <button onclick="prevQuestion()" class="w-1/3 bg-gray-200 hover:bg-gray-300 text-black text-xs md:text-sm font-bold p-2.5 rounded-2xl pixel-border transition-all transform active:scale-95 cursor-pointer shadow-[3px_3px_0px_#000]">
                                 이전 ↩️
                             </button>
                         ` : ''}
                         <button id="nextBtn" onclick="nextQuestion()" ${selectedOptionIdx === null ? "disabled" : ""} 
-                                 class="${currentQ > 0 ? 'w-2/3' : 'w-full'} text-base font-bold p-2.5 rounded-2xl pixel-border transition-all transform active:scale-95 ${selectedOptionIdx === null ? "bg-gray-300 text-gray-500 cursor-not-allowed opacity-50" : "bg-[#7FFF00] text-black cursor-pointer shadow-[3px_3px_0px_#000]"}"
+                                 class="${currentQ > 0 ? 'w-2/3' : 'w-full'} text-xs md:text-sm font-bold p-2.5 rounded-2xl pixel-border transition-all transform active:scale-95 ${selectedOptionIdx === null ? "bg-gray-300 text-gray-500 cursor-not-allowed opacity-50" : "bg-[#7FFF00] text-black cursor-pointer shadow-[3px_3px_0px_#000]"}"
                                  style="animation: ${selectedOptionIdx !== null ? 'bobbing 1s infinite' : 'none'}">
                             다음 문항으로 🚀
                         </button>
@@ -693,7 +710,6 @@
 
                 const arch = archetypeMap[finalCode] || archetypeMap["PLC"] || archetypeMap["POC"];
 
-                // Percentages & RPG Levels calculation
                 const pTotal = (finalScores.P + finalScores.I) || 1;
                 const oTotal = (finalScores.O + finalScores.L) || 1;
                 const cTotal = (finalScores.C + finalScores.S) || 1;
@@ -706,7 +722,6 @@
                 const lPct = 100 - oPct;
                 const sPct = 100 - cPct;
 
-                // RPG Levels
                 const logicLv = Math.min(99, Math.max(60, Math.round(lPct * 0.4 + 59)));
                 const creativeLv = Math.min(99, Math.max(60, Math.round(oPct * 0.4 + 59)));
                 const planLv = Math.min(99, Math.max(60, Math.round(pPct * 0.4 + 59)));
@@ -715,13 +730,13 @@
                 app.innerHTML = `
                     ${toastHtml}
                     <!-- 진단 결과 카드 영역 -->
-                    <div class="bg-white p-3.5 rounded-2xl border-2 border-black flex flex-col gap-3">
+                    <div class="bg-white p-3 rounded-2xl border-2 border-black flex flex-col gap-2.5">
                         <div class="text-center">
-                            <span class="text-xs font-bold bg-amber-200 text-black py-1 px-3 rounded-full border border-black inline-block mb-1">
+                            <span class="text-xs font-bold bg-amber-200 text-black py-0.5 px-2.5 rounded-full border border-black inline-block mb-1">
                                 수행평가 본캐 진단결과
                             </span>
-                            <h2 class="text-base font-bold text-gray-800">[${userName}] 학생의 수행평가 본캐는?!</h2>
-                            <div class="my-1.5 bg-[#FFC0CB] text-lg md:text-xl font-bold py-1.5 px-4 rounded-xl pixel-border inline-block pixel-shadow font-retro-title">
+                            <h2 class="text-sm md:text-base font-bold text-gray-800">[${userName}] 학생의 수행평가 본캐는?!</h2>
+                            <div class="my-1 bg-[#FFC0CB] text-base md:text-lg font-bold py-1 px-3 rounded-xl pixel-border inline-block pixel-shadow font-retro-title">
                                 ${arch.name}
                             </div>
                         </div>
@@ -730,17 +745,17 @@
                             ${renderPixelAvatar(selectedAvatar, true)}
                         </div>
 
-                        <div class="bg-[#FFFDE7] p-3 rounded-xl pixel-border text-center text-sm md:text-base font-bold leading-relaxed">
+                        <div class="bg-[#FFFDE7] p-2.5 rounded-xl pixel-border text-center text-xs md:text-sm font-bold leading-relaxed">
                             ${arch.desc}
                         </div>
 
                         <!-- 레트로 게임 스타일 스탯창 -->
-                        <div class="bg-black text-white p-3 rounded-xl pixel-border flex flex-col gap-2">
+                        <div class="bg-black text-white p-2.5 rounded-xl pixel-border flex flex-col gap-1.5">
                             <div class="text-xs font-bold text-[#7FFF00] flex justify-between border-b border-gray-700 pb-1">
                                 <span>🎮 RPG 수행평가 능력치 스탯창</span>
                                 <span>TYPE: ${finalCode}</span>
                             </div>
-                            <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs font-bold">
+                            <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-xs font-bold">
                                 <div>🧠 논리력: <span class="text-cyan-300">LV.${logicLv}</span></div>
                                 <div>💡 창의성: <span class="text-yellow-300">LV.${creativeLv}</span></div>
                                 <div>📅 계획성: <span class="text-pink-300">LV.${planLv}</span></div>
@@ -749,13 +764,13 @@
                         </div>
 
                         <!-- 비율 프로그레스 바 -->
-                        <div class="flex flex-col gap-2 text-xs font-bold">
+                        <div class="flex flex-col gap-1.5 text-xs font-bold">
                             <div class="flex flex-col">
                                 <div class="flex justify-between mb-0.5">
                                     <span class="text-[#FF6B6B]">계획형 (P) ${pPct}%</span>
                                     <span class="text-[#9B5DE5]">즉흥형 (I) ${iPct}%</span>
                                 </div>
-                                <div class="w-full h-3 bg-gray-200 rounded-full flex overflow-hidden border border-black">
+                                <div class="w-full h-2.5 bg-gray-200 rounded-full flex overflow-hidden border border-black">
                                     <div class="h-full bg-[#FF8E8E]" style="width: ${pPct}%"></div>
                                     <div class="h-full bg-[#C5A3FF]" style="width: ${iPct}%"></div>
                                 </div>
@@ -766,7 +781,7 @@
                                     <span class="text-[#2ECC71]">독창형 (O) ${oPct}%</span>
                                     <span class="text-[#00BFFF]">논리형 (L) ${lPct}%</span>
                                 </div>
-                                <div class="w-full h-3 bg-gray-200 rounded-full flex overflow-hidden border border-black">
+                                <div class="w-full h-2.5 bg-gray-200 rounded-full flex overflow-hidden border border-black">
                                     <div class="h-full bg-[#7FFF00]" style="width: ${oPct}%"></div>
                                     <div class="h-full bg-[#00BFFF]" style="width: ${lPct}%"></div>
                                 </div>
@@ -777,7 +792,7 @@
                                     <span class="text-[#FF7F50]">협동형 (C) ${cPct}%</span>
                                     <span class="text-[#4682B4]">독립형 (S) ${sPct}%</span>
                                 </div>
-                                <div class="w-full h-3 bg-gray-200 rounded-full flex overflow-hidden border border-black">
+                                <div class="w-full h-2.5 bg-gray-200 rounded-full flex overflow-hidden border border-black">
                                     <div class="h-full bg-[#FF7F50]" style="width: ${cPct}%"></div>
                                     <div class="h-full bg-[#87CEEB]" style="width: ${sPct}%"></div>
                                 </div>
@@ -785,8 +800,8 @@
                         </div>
 
                         <!-- 찰떡 궁합 친구 유형 -->
-                        <div class="bg-indigo-50 border-2 border-black rounded-xl p-3 text-xs font-bold flex flex-col gap-1">
-                            <div class="flex items-center gap-1 text-indigo-900 text-sm font-extrabold">
+                        <div class="bg-indigo-50 border-2 border-black rounded-xl p-2.5 text-xs font-bold flex flex-col gap-0.5">
+                            <div class="flex items-center gap-1 text-indigo-900 font-extrabold">
                                 <span>👥 모둠 과제 찰떡 궁합 친구:</span>
                                 <span class="text-indigo-700 font-black">${arch.bestMatch}</span>
                             </div>
@@ -794,36 +809,41 @@
                         </div>
                     </div>
 
-                    <!-- 공유 버튼 영역 (1글자/전체 너비) -->
-                    <div class="w-full mt-1">
-                        <button onclick="copyShareLink()" class="w-full bg-purple-300 hover:bg-purple-400 text-black text-base font-bold p-3 rounded-xl pixel-border transition-all transform active:scale-95 cursor-pointer shadow-[2px_2px_0px_#000]">
+                    <!-- 공유 버튼 영역 -->
+                    <div class="w-full mt-0.5">
+                        <button onclick="copyShareLink()" class="w-full bg-purple-300 hover:bg-purple-400 text-black text-sm font-bold p-2.5 rounded-xl pixel-border transition-all transform active:scale-95 cursor-pointer shadow-[2px_2px_0px_#000]">
                             테스트 공유하기 🔗
                         </button>
                     </div>
 
                     <!-- 유형별 맞춤 도서 솔루션 (Cheat Key) -->
-                    <div class="bg-amber-50 p-3 rounded-xl pixel-border flex flex-col gap-2 text-center mt-1">
+                    <div class="bg-amber-50 p-3 rounded-xl pixel-border flex flex-col gap-2 text-center mt-0.5">
                         <div class="bg-amber-200 text-amber-950 font-extrabold text-xs py-1 px-2 rounded-md border border-amber-800">
                             🔑 [${userName}] 맞춤 처방전
                         </div>
-                        <p class="text-base font-bold text-amber-950 leading-tight">
+                        
+                        <div class="flex justify-center my-0.5">
+                            <img src="11111.jpeg" onerror="handleImgError(this)" alt="한수위 도서 표지" class="w-24 md:w-28 h-auto rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] object-cover cursor-pointer" onclick="window.open('https://www.yes24.com/product/goods/194634602', '_blank')">
+                        </div>
+
+                        <p class="text-sm font-bold text-amber-950 leading-tight">
                             ${arch.cheatTitle}
                         </p>
                         <p class="text-xs font-bold text-amber-900 leading-relaxed">
                             ${arch.cheatDesc}
                         </p>
                         
-                        <div class="flex flex-col gap-2 mt-1">
-                            <button onclick="showPreviewModal=true; playSfx(700,0.1); updateApp();" class="w-full bg-white hover:bg-gray-100 text-black text-base font-bold p-2.5 rounded-xl border-2 border-black transition-all cursor-pointer shadow-[2px_2px_0px_#000]">
+                        <div class="flex flex-col gap-1.5 mt-0.5">
+                            <button onclick="showPreviewModal=true; playSfx(700,0.1); updateApp();" class="w-full bg-white hover:bg-gray-100 text-black text-xs md:text-sm font-bold p-2 rounded-xl border-2 border-black transition-all cursor-pointer shadow-[2px_2px_0px_#000]">
                                 『한수위』 족보 템플릿 미리보기 📖
                             </button>
-                            <a href="https://www.yes24.com/product/goods/194634602" target="_blank" class="w-full block bg-[#7FFF00] hover:bg-yellow-300 text-black text-lg font-bold p-2.5 rounded-xl pixel-border transition-all transform active:scale-95 pixel-shadow mt-0.5">
+                            <a href="https://www.yes24.com/product/goods/194634602" target="_blank" class="w-full block bg-[#7FFF00] hover:bg-yellow-300 text-black text-sm font-bold p-2 rounded-xl pixel-border transition-all transform active:scale-95 pixel-shadow">
                                 [ 예스24에서 한수위 도서 구매하기 📚 ]
                             </a>
                         </div>
                     </div>
 
-                    <button onclick="resetTest()" class="w-full text-center text-sm font-bold text-gray-600 underline hover:text-black cursor-pointer py-1">
+                    <button onclick="resetTest()" class="w-full text-center text-xs font-bold text-gray-600 underline hover:text-black cursor-pointer py-1">
                         테스트 다시하기 🔄
                     </button>
 
@@ -841,25 +861,25 @@
                         
                         <div class="text-center">
                             <span class="text-2xl">📖</span>
-                            <h3 class="text-lg font-bold text-black mt-1">『한수위』 실전 족보 템플릿 미리보기</h3>
+                            <h3 class="text-base font-bold text-black mt-1">『한수위』 실전 족보 템플릿 미리보기</h3>
                             <p class="text-xs font-bold text-gray-600">책 속 수록된 만점 4단계 서식 샘플</p>
                         </div>
 
-                        <div class="bg-amber-50 p-3 rounded-xl border-2 border-black flex flex-col gap-2 text-xs font-bold text-gray-900 leading-relaxed">
+                        <div class="bg-amber-50 p-2.5 rounded-xl border-2 border-black flex flex-col gap-1.5 text-xs font-bold text-gray-900 leading-relaxed">
                             <div class="bg-amber-200 text-amber-950 p-1 rounded text-center font-extrabold">
                                 [독서 감상문 감점 방지 서식]
                             </div>
-                            <p>■ 1단계: 자기 생각과 삶의 연결 (40%))<br>-책 내용을 바탕으로 자신의 삶과 경험, 가치관을 구체적으로 연결 </p>
+                            <p>■ 1단계: 자기 생각과 삶의 연결 (40%)<br>-책 내용을 바탕으로 자신의 삶과 경험, 가치관을 구체적으로 연결 </p>
                             <p>■ 2단계: 수행 과정의 성실성 (30%)<br>- 인상 깊은 문장과 나의 시각과 소감 매칭</p>
                             <p>■ 3단계: 내용의 완성도와 분량 (30%)<br>- 읽기 전/후 자신의 생각 변화 및 저자 주장 비판을 명확히 표현</p>
-                            <p>■ 내 생각 표현하는 꿀팁 <br>- 등장인물 되어보기, 책 읽으며 느낀 감정 단계별로 쓰기, 책 내용과 현실 연결
+                            <p>■ 내 생각 표현하는 꿀팁 <br>- 등장인물 되어보기, 책 읽으며 느낀 감정 단계별로 쓰기, 책 내용과 현실 연결</p>
                         </div>
 
-                        <div class="bg-cyan-50 p-2.5 rounded-xl border-2 border-black text-xs font-bold text-cyan-950">
+                        <div class="bg-cyan-50 p-2 rounded-xl border-2 border-black text-xs font-bold text-cyan-950">
                             💡 "전과목 30여 개 실전 만점 예시 전문은 『한수위』 도서에 완성형으로 들어있습니다."
                         </div>
 
-                        <a href="https://www.yes24.com/product/goods/194634602" target="_blank" class="w-full text-center bg-[#7FFF00] hover:bg-yellow-300 text-black text-base font-bold p-2.5 rounded-xl border-2 border-black transition-all cursor-pointer shadow-[2px_2px_0px_#000]">
+                        <a href="https://www.yes24.com/product/goods/194634602" target="_blank" class="w-full text-center bg-[#7FFF00] hover:bg-yellow-300 text-black text-sm font-bold p-2 rounded-xl border-2 border-black transition-all cursor-pointer shadow-[2px_2px_0px_#000]">
                             예스24에서 한수위 도서 구매하기 📚
                         </a>
                     </div>
